@@ -2,15 +2,18 @@
 Example how to create and fill a 0x order based on v4 of the protocol on Ropsten (Chain ID = 3).
 
 # Installation
-Clone or for <code>0x-fill-order-example</code>:
+Clone or fork <code>0x-fill-order-example</code>:
 
 <code>git clone https://github.com/Walodja1987/0x-fill-order-example</code>
 
 Install all dependencies:
+
 <code>cd 0x-fill-order-example</code>
+
 <code>npm install</code>
 
 Run your app:
+
 <code>npm start</code>
 
 # 0x Libraries used
