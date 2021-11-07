@@ -17,7 +17,6 @@
 
 
 import { ERC20TokenContract, IZeroExContract } from '@0x/contract-wrappers';
-//const wrappers = require("@0x/contract-wrappers");
 import { BigNumber, providerUtils } from '@0x/utils';
 import * as qs from 'qs';
 import Web3 from 'web3';
@@ -27,9 +26,9 @@ const ERC20_ABI = ERC20.abi;
 const utils = require("@0x/protocol-utils");
 const contractAddresses = require("@0x/contract-addresses");
 
-function ApproveAndFill() {
+function FillLimitOrder() {
   
-    async function approveAndFill() {
+    async function fillLimitOrder() {
         
         // Get exchangeProxy contract address from @0x/contract-addresses library
         const CHAIN_ID = 3; // Ropsten
@@ -66,9 +65,6 @@ function ApproveAndFill() {
         // Separate signature from the rest of the response object as they are required as separate inputs in fillLimitOrder (see below)
         const { signature, ...order } = responseOrder
 
-        // Extract the maker account address from order object
-        const makerAccount = order.maker;
-
         // Get connected account
         const accounts = await web3.eth.getAccounts();
         const takerAccount = accounts[0]; 
@@ -76,30 +72,21 @@ function ApproveAndFill() {
 
         // ************* Set up approval ****************
         // Contract addresses of maker and taker token
-        const takerTokenAddress = "0xad6d458402f60fd3bd25163575031acdce07538d"
+        const takerTokenAddress = order.takerToken;
 
-        // Allowance amount. Maximum allowance chosen for illustration purposes only. Not recommended in production environment.
-        const maxApproval = new BigNumber(2).pow(256).minus(1);
-
-        // **************** Approve token transfers (method 1 using web3) *************
+        // **************** Check allowance (method 1 using web) *************
         // Initialize taker and maker contracts
         const takerTokenContract = await new web3.eth.Contract(ERC20_ABI, takerTokenAddress)
-        
-        // Set allowance for the exchange proxy contract (by both maker and taker)
-        await takerTokenContract.methods.approve(exchangeProxyAddress, maxApproval).send({from: takerAccount});
         
         // Check allowance
         const approvedByTaker = await takerTokenContract.methods.allowance(takerAccount, exchangeProxyAddress).call();
         // *************************************************************************************
 
-        // **************** Approve token transfers (method 2 using 0x libraries) *************
+        // **************** Check allowance (method 1 using 0x libraries) *************
         // You have to comment out the approval part above if you want to use this part
 
         // // Initialize taker and maker contracts
         // const takerTokenContract = new ERC20TokenContract(takerTokenAddress, web3.eth.currentProvider);
-
-        // // Set allowance for the exchange proxy contract (by both maker and taker)
-        // await takerTokenContract.approve(exchangeProxyAddress, maxApproval).awaitTransactionSuccessAsync({ from: takerAccount });
 
         // // Check allowance
         // const approvedByTaker = await takerTokenContract.allowance(takerAccount, exchangeProxyAddress).callAsync();
@@ -107,10 +94,14 @@ function ApproveAndFill() {
 
         // Print allowances
         console.log("Approved by taker: " + await approvedByTaker.toString())
-        // console.log("Approved by maker: " + await approvedByMaker.toString())
 
         // Set taker amount
         const takerAssetFillAmount = new BigNumber(10000000000000000); // 0.01 
+        if (takerAssetFillAmount > approvedByTaker) {
+            alert("takerAssetFillAmount exceeds allowance.");
+            return;
+        }
+        
         // TODO WHETHER takerAmount exceeds remainingFillable amount
 
         // Fill order
@@ -122,9 +113,9 @@ function ApproveAndFill() {
 
     return (
         <div>
-            <button onClick={approveAndFill}>Approve and fill</button>
+            <button onClick={fillLimitOrder}>Fill limit order</button>
         </div>
     );
 }
 
-export default ApproveAndFill;
+export default FillLimitOrder;

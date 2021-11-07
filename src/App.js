@@ -1,9 +1,10 @@
 import './App.css';
 import WalletConnectButton from './WalletConnectButton';
 import Sign from './Sign';
-import ApproveAndFill from './ApproveAndFill';
+import FillLimitOrder from './FillLimitOrder';
 import FillQuote from './FillQuote';
 import ApproveMaker from './ApproveMaker';
+import ApproveTaker from './ApproveTaker';
 
 
 function App() {
@@ -15,9 +16,11 @@ function App() {
       <ApproveMaker />
       <h1>Step 3: Create, sign and submit 0x order</h1>
       <Sign />
-      <h1>Step 4: Approve and fill</h1>
-      <ApproveAndFill />
-      <h1>Fill quote</h1>
+      <h1>Step 4: Approve by taker</h1>
+      <ApproveTaker />
+      <h1>Step 5: Fill limit order</h1>
+      <FillLimitOrder />
+      <h1>Other: Fill quote</h1>
       <FillQuote />
     </div>
   );
