@@ -1,22 +1,17 @@
 /**
+ * Component to fill limit order
+ * Note that fill limit order requires prior authorization of the 0x exchange contract to transfer maker and taker tokens (to be done separately by maker and taker)
  * 
- * Taker needs to approve the transfer
- * 
+ * Linkss:
  * https://0x.org/docs/guides/v3-specification#fillorder
  * List of 0x contract addresses across networks here: https://github.com/0xProject/protocol/blob/development/packages/contract-addresses/addresses.json
- * 
- * Improvements: 
- * Leverage @0x/contract-wrappers to connect to ERC20 tokens rather than web3.eth.Contracts as they don't require and ABI
  * 
  * Error messages:
  * 1. MetaMask - RPC Error: Invalid parameters: must provide an Ethereum address. 
  * Reason: You are trying to fill the order with the same account that created it
  */
-        // 
 
-
-
-import { ERC20TokenContract, IZeroExContract } from '@0x/contract-wrappers';
+import { ERC20TokenContract, IZeroExContract } from '@0x/contract-wrappers'; 
 import { BigNumber, providerUtils } from '@0x/utils';
 import * as qs from 'qs';
 import Web3 from 'web3';
@@ -31,7 +26,7 @@ function FillLimitOrder() {
     async function fillLimitOrder() {
         
         // Get exchangeProxy contract address from @0x/contract-addresses library
-        const CHAIN_ID = 3; // Ropsten
+        const CHAIN_ID = 3; // 3: Ropsten; 1: Mainnet
         const addresses = contractAddresses.getContractAddressesForChainOrThrow(CHAIN_ID);
         const exchangeProxyAddress = addresses.exchangeProxy; // 0xdef1c0ded9bec7f1a1670819833240f027b25eff (same for several chains including Mainnet and Ropsten)
 

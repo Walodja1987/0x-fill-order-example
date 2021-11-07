@@ -1,5 +1,8 @@
+/**
+ * Component to set taker token approval
+ */
 
-import { ERC20TokenContract, IZeroExContract } from '@0x/contract-wrappers';
+import { ERC20TokenContract, IZeroExContract } from '@0x/contract-wrappers'; // Optional in case you prefer 0x libraries to connect to contracts 
 import { BigNumber } from '@0x/utils';
 import Web3 from 'web3';
 import * as ERC20 from './ERC20.json';
@@ -12,7 +15,7 @@ function ApproveTaker() {
     async function approveTaker() {
         
         // Get exchangeProxy contract address from @0x/contract-addresses library
-        const CHAIN_ID = 3; // Ropsten
+        const CHAIN_ID = 3; // 3: Ropsten; 1: Mainnet
         const addresses = contractAddresses.getContractAddressesForChainOrThrow(CHAIN_ID);
         const exchangeProxyAddress = addresses.exchangeProxy; // 0xdef1c0ded9bec7f1a1670819833240f027b25eff (same for several chains including Mainnet and Ropsten)
 

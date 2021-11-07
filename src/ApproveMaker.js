@@ -1,5 +1,8 @@
+/**
+ * Component to set maker token approval
+ */
 
-import { ERC20TokenContract, IZeroExContract } from '@0x/contract-wrappers';
+import { ERC20TokenContract, IZeroExContract } from '@0x/contract-wrappers'; // Optional in case you prefer 0x libraries to connect to contracts
 import { BigNumber } from '@0x/utils';
 import Web3 from 'web3';
 import * as ERC20 from './ERC20.json';
@@ -12,13 +15,10 @@ function ApproveMaker() {
     async function approveMaker() {
         
         // Get exchangeProxy contract address from @0x/contract-addresses library
-        const CHAIN_ID = 3; // Ropsten
+        const CHAIN_ID = 3; // 3: Ropsten; 1: Mainnet
         const addresses = contractAddresses.getContractAddressesForChainOrThrow(CHAIN_ID);
         const exchangeProxyAddress = addresses.exchangeProxy; // 0xdef1c0ded9bec7f1a1670819833240f027b25eff (same for several chains including Mainnet and Ropsten)
 
-        // // Connect to 0x exchange contract 
-        // const exchange = new IZeroExContract(exchangeProxyAddress, window.ethereum);
-                
         // Create web3 instance using window.ethereum (i.e. MetaMask wallet) as the provider
         let web3 = null;
         web3 = new Web3(window.ethereum);
