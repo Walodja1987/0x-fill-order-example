@@ -34,5 +34,6 @@ Optional in case you want to use 0x library to initialize your provider or if yo
 # Links
 * Official 0x protocol repository: https://github.com/0xProject/protocol
 * 0x API: https://github.com/0xProject/website/blob/development/mdx/api/index.mdx#get-swapv1quote
+* 0x API documentation: https://github.com/0xProject/0x-api
 * 0x packages: https://github.com/0xProject/protocol/tree/4f32f3174f25858644eae4c3de59c3a6717a757c/packages
 
