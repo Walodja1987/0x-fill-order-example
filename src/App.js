@@ -2,7 +2,8 @@ import './App.css';
 import WalletConnectButton from './WalletConnectButton';
 import Sign from './Sign';
 import FillLimitOrder from './FillLimitOrder';
-import FillQuote from './FillQuote';
+import FillQuoteV1 from './FillQuote_v1';
+import FillQuoteV2 from './FillQuote_v2'; // Same as FillQuoteV1 but with less code
 import ApproveMaker from './ApproveMaker';
 import ApproveTaker from './ApproveTaker';
 
@@ -21,7 +22,7 @@ function App() {
       <h1>Step 5: Fill limit order</h1>
       <FillLimitOrder />
       <h1>Other: Fill quote</h1>
-      <FillQuote />
+      <FillQuoteV1 />
     </div>
   );
 }

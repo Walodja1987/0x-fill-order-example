@@ -13,10 +13,10 @@ const ERC20_ABI = data.abi;
 const utils = require("@0x/protocol-utils");
 const contractAddresses = require("@0x/contract-addresses");
 
-function FillQuote() {
+function FillQuoteV1() {
     
 
-    async function fillQuote() {
+    async function fillQuoteV1() {
         
         // Get exchangeProxy contract address on Ropsten
         const CHAIN_ID = 3; // 3: Ropsten; 1: Mainnet
@@ -46,7 +46,7 @@ function FillQuote() {
         const quote = await res.json();
 
         // Set up approval for the token the taker wants to sell. 
-        const takerTokenAddress = "0xad6d458402f60fd3bd25163575031acdce07538d"; // Ropsten DAI
+        const takerTokenAddress = quote.sellTokenAddress; // "0xad6d458402f60fd3bd25163575031acdce07538d"; // Ropsten DAI
         const maxApproval = new BigNumber(2).pow(256).minus(1);
 
         // **************** Approve token transfers (method 1 using web3) *************
@@ -54,7 +54,7 @@ function FillQuote() {
         const TakerTokenContract = await new web3.eth.Contract(ERC20_ABI, takerTokenAddress)
 
         // Set allowance for the exchange proxy contract
-        await TakerTokenContract.methods.approve(exchangeProxyAddress, maxApproval).send({from: web3.eth.defaultAccount});
+        await TakerTokenContract.methods.approve(exchangeProxyAddress, maxApproval).send({from: taker}); // alternatively, replace exchangeProxyAddress with quote.allowanceTarget which should be the same
         
         // Check allowance
         const allowanceFromTaker = await TakerTokenContract.methods.allowance(taker, exchangeProxyAddress).call();
@@ -64,23 +64,23 @@ function FillQuote() {
         // const takerTokenContract = new ERC20TokenContract(takerTokenAddress, web3.eth.currentProvider);
 
         // // Set allowance for the exchange proxy contract
-        // await takerTokenContract.approve(exchangeProxyAddress, maxApproval).awaitTransactionSuccessAsync({ from: takerAccount }); // Comment out when you are connected to takerAccount
+        // await takerTokenContract.approve(exchangeProxyAddress, maxApproval).awaitTransactionSuccessAsync({ from: taker }); // Comment out when you are connected to takerAccount
 
         // // Check allowance
-        // const approvedByTaker = await takerTokenContract.allowance(takerAccount, exchangeProxyAddress).callAsync();
+        // const allowanceFromTaker = await takerTokenContract.allowance(taker, exchangeProxyAddress).callAsync();
 
         console.log("Allowance taker: " + await allowanceFromTaker.toString());
         
         // Fill quote
-        await web3.eth.sendTransaction(quote, {gasLimit: 1000000}); // gas set to 1mln, otherwise tx will fail
+        await web3.eth.sendTransaction(quote, {gasLimit: 1000000}); // gas set to 1mln, otherwise tx will fail (somehow it doesn't set it automatically in MetaMask, so do it manually)
 
     };
 
     return (
         <div>
-            <button onClick={fillQuote}>FillQuote</button>
+            <button onClick={fillQuoteV1}>FillQuote</button>
         </div>
     );
 }
 
-export default FillQuote;
+export default FillQuoteV1;
