@@ -25,14 +25,19 @@
          
          web3.eth.defaultAccount = taker;
  
+        // erc20Proxy address for any swap: 
+        // Ropsten: 0xf1ec7d0ba42f15fb5c9e3adbe86431973e44764c
+        // Mainnet: 0x95e6f48254609a6ee006f7d493c8e5fb97094cef
+        // Source: https://github.com/0xProject/protocol/blob/development/packages/contract-addresses/addresses.json
+
          // Get a quote from 0x API which contains `allowanceTarget`. This is the contract that the user needs to set an ERC20 allowance for
          // API string: https://ropsten.api.0x.org/swap/v1/quote?buyToken=WETH&sellToken=DAI&buyAmount=10000000000000000
          const params = {
-             buyToken: "WETH",// "0xa03b86865fd90ad68dbe5db5a01ca9d02b5a1896",
-             sellToken: "DAI", // "0xad6d458402f60fd3bd25163575031acdce07538d",
-             sellAmount: "10000000000000000", // 0.01
+             buyToken: "0xc03ce38bc55836a4ef61ab570253cd7bfff3af44",// Ropsten WETH: 0xa03b86865fd90ad68dbe5db5a01ca9d02b5a1896,
+             sellToken: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174", // Ropsten DAI: 0xad6d458402f60fd3bd25163575031acdce07538d,
+             sellAmount: "500", // 0.0005 USDC
          }
-         const res = await fetch(`https://ropsten.api.0x.org/swap/v1/quote?${qs.stringify(params)}`);
+         const res = await fetch(`https://polygon.api.0x.org/swap/v1/quote?${qs.stringify(params)}`);
          const quote = await res.json();
  
          // Set up approval for the token the taker wants to sell. 

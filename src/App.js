@@ -6,6 +6,7 @@ import FillQuoteV1 from './FillQuote_v1';
 import FillQuoteV2 from './FillQuote_v2'; // Same as FillQuoteV1 but with less code
 import ApproveMaker from './ApproveMaker';
 import ApproveTaker from './ApproveTaker';
+import BatchFillOrders from './BatchFillOrders';
 
 
 function App() {
@@ -19,10 +20,12 @@ function App() {
       <Sign />
       <h1>Step 4: Approve by taker</h1>
       <ApproveTaker />
-      <h1>Step 5: Fill limit order</h1>
+      <h1>Step 5a: Fill limit order</h1>
       <FillLimitOrder />
+      <h1>Step 5b: Batch fill orders</h1>
+      <BatchFillOrders />
       <h1>Other: Fill quote</h1>
-      <FillQuoteV1 />
+      <FillQuoteV2 />
     </div>
   );
 }

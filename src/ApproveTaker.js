@@ -15,7 +15,7 @@ function ApproveTaker() {
     async function approveTaker() {
         
         // Get exchangeProxy contract address from @0x/contract-addresses library
-        const CHAIN_ID = 3; // 3: Ropsten; 1: Mainnet
+        const CHAIN_ID = 137; // 3: Ropsten; 1: Mainnet; 137: Polygon
         const addresses = contractAddresses.getContractAddressesForChainOrThrow(CHAIN_ID);
         const exchangeProxyAddress = addresses.exchangeProxy; // 0xdef1c0ded9bec7f1a1670819833240f027b25eff (same for several chains including Mainnet and Ropsten)
 
@@ -23,7 +23,7 @@ function ApproveTaker() {
         let web3 = null;
         web3 = new Web3(window.ethereum);
         
-        const takerTokenAddress = "0xad6d458402f60fd3bd25163575031acdce07538d";
+        const takerTokenAddress = "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"; // Polygon USDC: 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174; Ropsten DAI: 0xad6d458402f60fd3bd25163575031acdce07538d
 
         // Get connected account
         const accounts = await web3.eth.getAccounts();

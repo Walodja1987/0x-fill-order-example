@@ -15,7 +15,7 @@ function ApproveMaker() {
     async function approveMaker() {
         
         // Get exchangeProxy contract address from @0x/contract-addresses library
-        const CHAIN_ID = 3; // 3: Ropsten; 1: Mainnet
+        const CHAIN_ID = 137; // 3: Ropsten; 1: Mainnet; 137: Polygon
         const addresses = contractAddresses.getContractAddressesForChainOrThrow(CHAIN_ID);
         const exchangeProxyAddress = addresses.exchangeProxy; // 0xdef1c0ded9bec7f1a1670819833240f027b25eff (same for several chains including Mainnet and Ropsten)
 
@@ -23,7 +23,7 @@ function ApproveMaker() {
         let web3 = null;
         web3 = new Web3(window.ethereum);
         
-        const makerTokenAddress = "0x32de47Fc9bc48F4c56f9649440532081466036A2";
+        const makerTokenAddress = "0xc03ce38bc55836a4ef61ab570253cd7bfff3af44";// Ropsten: "0x32de47Fc9bc48F4c56f9649440532081466036A2"; Polygon: "0xc03ce38bc55836a4ef61ab570253cd7bfff3af44"
 
         // Get connected account
         const accounts = await web3.eth.getAccounts();

@@ -19,7 +19,7 @@ function FillQuoteV1() {
     async function fillQuoteV1() {
         
         // Get exchangeProxy contract address on Ropsten
-        const CHAIN_ID = 3; // 3: Ropsten; 1: Mainnet
+        const CHAIN_ID = 137; // 3: Ropsten; 1: Mainnet; 137: Polygon
         const addresses = contractAddresses.getContractAddressesForChainOrThrow(CHAIN_ID);
         const exchangeProxyAddress = addresses.exchangeProxy;
         
@@ -36,13 +36,13 @@ function FillQuoteV1() {
 
         // Get a quote from 0x API which contains `allowanceTarget`
         // This is the contract that the user needs to set an ERC20 allowance for
-        // API string: https://ropsten.api.0x.org/swap/v1/quote?buyToken=WETH&sellToken=DAI&buyAmount=10000000000000000
+        // API string: https://polygon.api.0x.org/swap/v1/quote?buyToken=WETH&sellToken=DAI&buyAmount=10000000000000000
         const params = {
-            buyToken: "WETH",// "0xa03b86865fd90ad68dbe5db5a01ca9d02b5a1896",
-            sellToken: "DAI", // "0xad6d458402f60fd3bd25163575031acdce07538d",
+            buyToken: "WETH",// Ropsten WETH: 0xa03b86865fd90ad68dbe5db5a01ca9d02b5a1896,
+            sellToken: "DAI", // Ropsten DAI: 0xad6d458402f60fd3bd25163575031acdce07538d,
             sellAmount: "10000000000000000", // 0.01
         }
-        const res = await fetch(`https://ropsten.api.0x.org/swap/v1/quote?${qs.stringify(params)}`);
+        const res = await fetch(`https://polygon.api.0x.org/swap/v1/quote?${qs.stringify(params)}`);
         const quote = await res.json();
 
         // Set up approval for the token the taker wants to sell. 
