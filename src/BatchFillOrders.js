@@ -41,7 +41,7 @@ function BatchFillOrders() {
     async function batchFillOrders() {
         
         // Get exchangeProxy contract address from @0x/contract-addresses library
-        const CHAIN_ID = 137; // 3: Ropsten; 1: Mainnet; 137: Polygon
+        const CHAIN_ID = 3; // 3: Ropsten; 1: Mainnet; 137: Polygon
         const addresses = contractAddresses.getContractAddressesForChainOrThrow(CHAIN_ID);
         const exchangeProxyAddress = addresses.exchangeProxy; // 0xdef1c0ded9bec7f1a1670819833240f027b25eff (same for most chains including Mainnet, Ropsten and Polygon)
 
@@ -54,24 +54,39 @@ function BatchFillOrders() {
         
         // Define parameters for API call (format: https://polygon.api.0x.org/orderbook/v1/orders?makerToken=0xc03ce38bc55836a4ef61ab570253cd7bfff3af44&takerToken=0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174)
         const params = {
-            makerToken: "0xc03ce38bc55836a4ef61ab570253cd7bfff3af44", // Polygon ERC20: 0xc03ce38bc55836a4ef61ab570253cd7bfff3af44, Ropsten ERC20: 0x32de47Fc9bc48F4c56f9649440532081466036A2
-            takerToken: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174", // Collateral token: Polygon USDC: 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174, Ropsten DAI: 0xaD6D458402F60fD3Bd25163575031ACDce07538D
+            quoteToken: "0x134e62bd2ee247d4186a1fdbaa9e076cb26c1355", // Polygon ERC20: 0xc03ce38bc55836a4ef61ab570253cd7bfff3af44, Ropsten ERC20: 0x32de47Fc9bc48F4c56f9649440532081466036A2
+            baseToken: "0x03582cb41f2fd982e1b531d633b6de049d56f2a0", // Collateral token: Polygon USDC: 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174, Ropsten DAI: 0xaD6D458402F60fD3Bd25163575031ACDce07538D
         }
 
         // Issue API request and fetch JSON response
-        const res = await fetch(`https://polygon.api.0x.org/orderbook/v1/orders?${qs.stringify(params)}`);
+        // const res = await fetch(`https://ropsten.api.0x.org/orderbook/v1/orders?${qs.stringify(params)}`);
+        const res = await fetch(`https://ropsten.api.0x.org/orderbook/v1?${qs.stringify(params)}`);
         const resJSON = await res.json();
-        
+
+        console.log(resJSON)
         // Fetch first order object in records JSON object array
         let orders = [];
         let signatures = [];
+        let remainingFillableTakerAmounts = []
         let responseOrder;
+        let metadata = [];
         try {
-            responseOrder = resJSON["records"];
+            responseOrder = resJSON["bids"]["records"];
+            
+            console.log(responseOrder)
             // Separate signature from the rest of the response object as they are required as separate inputs in fillLimitOrder (see below)
             const aux = responseOrder.map(item => item.order);
             orders = aux.map(({ signature, ...rest }) => rest);
             signatures = aux.map(({ signature, ...rest }) => signature);
+
+            // metadata = responseOrder.map(item => item.metadata)
+            metadata = responseOrder["metadata"];
+            // remaining = aux2.map(({ remainingFillableTakerAmount, ...rest}) => remainingFillableTakerAmount)
+            // responseOrder.map(function (metadata) {
+            //     remainingFillableTakerAmounts.push(metadata.remainingFillableTakerAmount)
+                // delete metadata.signature
+                // return metadata
+            //   })
         } catch(err) {
             alert("No orders found")
             console.log(err);
@@ -85,7 +100,7 @@ function BatchFillOrders() {
 
         // ************* Set up approval ****************
         // Contract addresses of maker and taker token
-        const takerTokenAddress = params.takerToken;
+        const takerTokenAddress = params.baseToken;
 
         // **************** Check allowance (method 1 using web) *************
         // Initialize taker and maker contracts
@@ -112,24 +127,27 @@ function BatchFillOrders() {
         // TODO: Handle sum(takerAssetAmountFillAmounts) > allowance
 
         // Set taker amount
-        const takerFillAmount1 = new BigNumber(100);
-        const takerFillAmount2 = new BigNumber(200);
-        const takerFillAmount3 = new BigNumber(300);
+        // const takerFillAmount1 = new BigNumber(1);
+        // const takerFillAmount2 = new BigNumber(1);
+        // const takerFillAmount3 = new BigNumber(1);
 
         // Serialize an array of three BigNumbers
-        const str = JSON.stringify( [takerFillAmount1, takerFillAmount2, takerFillAmount3] )
+        // const str = JSON.stringify( [takerFillAmount1] )
         // Return an array of three BigNumbers
-        const takerAssetFillAmounts = JSON.parse(str, function (key, val) {
-            return key === '' ? val : new BigNumber(val)
-        })
+        console.log('metadata', metadata)
+        const takerAssetFillAmounts = ['1']
+        // JSON.parse(str, function (key, val) {
+        //     return key === '' ? val : new BigNumber(val)
+        // })
 
+        console.log('takerAssetFillAmounts')
         console.log(takerAssetFillAmounts)
-        
+
         // TODO Handle sum(takerAssetAmountFillAmounts) > remainingFillable amount
 
         // Batch fill limit order
         await exchange
-            .batchFillLimitOrders(orders, signatures, takerAssetFillAmounts, true)
+            .batchFillLimitOrders(orders.slice(0,1), signatures.slice(0,1), takerAssetFillAmounts, true)
             .awaitTransactionSuccessAsync({ from: takerAccount})
             .catch((err) => console.error(err));
     };
