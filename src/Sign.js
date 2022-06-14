@@ -46,10 +46,10 @@ function Sign() {
         // taker is the account filling a maker's order; takerToken is the token the maker wants to buy / taker will sell
         // QUESTION: Can maker create the order even when he doesn't own the respective amount of takerTokens?
         const order = new utils.LimitOrder({
-            makerToken: "0xc03ce38bc55836a4ef61ab570253cd7bfff3af44", //"0xc03ce38bc55836a4ef61ab570253cd7bfff3af44", // 0x32de... is a test ERC20 token; you can leverage the @0x/contract-addresses library for standard tokens (e.g., addresses.etherToken, addresses.zrxToken)
-            takerToken: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174", // Polygon USDC: 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174; Ropsten DAI: 0xad6d458402f60fd3bd25163575031acdce07538d
-            makerAmount: "10000000000000000", // 0.01 for ERC20 tokens with 18 decimals
-            takerAmount: "1000", // <- Polygon USDC with 6 decimals (1000 = 0.001); Ropsten DAI with 18 decimals (50000000000000000 = 0.05)
+            makerToken: "0x512f8c2eec4498cc0638886381d067a3e3c4695a", //"0xc03ce38bc55836a4ef61ab570253cd7bfff3af44", // 0x32de... is a test ERC20 token; you can leverage the @0x/contract-addresses library for standard tokens (e.g., addresses.etherToken, addresses.zrxToken)
+            takerToken: "0xf9C6740DDFfDd0303ffDc79BAB56cc90fA858E9F", // Polygon USDC: 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174; Ropsten DAI: 0xad6d458402f60fd3bd25163575031acdce07538d
+            makerAmount: "1000000000000000000", // 1 LONG; 0.01 for ERC20 tokens with 18 decimals
+            takerAmount: "500000000000000000", // 0.5 WAGMI18; <- Polygon USDC with 6 decimals (1000 = 0.001); Ropsten DAI with 18 decimals (50000000000000000 = 0.05)
             maker: maker,
             sender: NULL_ADDRESS,
             expiry: getFutureExpiryInSeconds(),
@@ -61,6 +61,13 @@ function Sign() {
             feeRecipient: "0x0000000000000000000000000000000000000000" 
         });
         
+        // BUY 1 LONG -> 1000000000000000000 (integer representation of 1 full unit of LONG token with 18 decimals)
+        // FOR 0.2 USDC -> 200000
+
+        // 100 LONG
+        // 20 USDC
+
+
         console.dir(order);
 
         // Sign order conforming to the EIP712 standard

@@ -4,6 +4,7 @@
 
 import { ERC20TokenContract, IZeroExContract } from '@0x/contract-wrappers'; // Optional in case you prefer 0x libraries to connect to contracts 
 import { BigNumber } from '@0x/utils';
+// import { parseEther } from 'ethers/lib/utils';
 import Web3 from 'web3';
 import * as ERC20 from './ERC20.json';
 
@@ -23,7 +24,7 @@ function ApproveTaker() {
         let web3 = null;
         web3 = new Web3(window.ethereum);
         
-        const takerTokenAddress = "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"; // Polygon USDC: 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174; Ropsten DAI: 0xad6d458402f60fd3bd25163575031acdce07538d
+        const takerTokenAddress = "0xf9C6740DDFfDd0303ffDc79BAB56cc90fA858E9F"; // Polygon USDC: 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174; Ropsten DAI: 0xad6d458402f60fd3bd25163575031acdce07538d
 
         // Get connected account
         const accounts = await web3.eth.getAccounts();
@@ -31,7 +32,7 @@ function ApproveTaker() {
         console.log("Current account connected: " + takerAccount)
 
         // Allowance amount. Maximum allowance chosen for illustration purposes only. Not recommended in production environment.
-        const maxApproval = new BigNumber(2).pow(256).minus(1);
+        const maxApproval = "100000000000000000000"// new BigNumber(10).pow(256).minus(1);
 
         // **************** Approve token transfers (method 1 using web3) *************
         // Initialize taker contract
