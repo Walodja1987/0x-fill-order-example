@@ -52,15 +52,16 @@ function BatchFillOrders() {
         let web3 = null;
         web3 = new Web3(window.ethereum);
         
-        // Define parameters for API call (format: https://polygon.api.0x.org/orderbook/v1/orders?makerToken=0xc03ce38bc55836a4ef61ab570253cd7bfff3af44&takerToken=0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174)
+        // Define parameters for API call
+        // format: https://ropsten.api.0x.org/orderbook/v1/orderbook?quoteToken=0xc03ce38bc55836a4ef61ab570253cd7bfff3af44&baseToken=0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174)
         const params = {
-            quoteToken: "0x134e62bd2ee247d4186a1fdbaa9e076cb26c1355", // Polygon ERC20: 0xc03ce38bc55836a4ef61ab570253cd7bfff3af44, Ropsten ERC20: 0x32de47Fc9bc48F4c56f9649440532081466036A2
-            baseToken: "0x03582cb41f2fd982e1b531d633b6de049d56f2a0", // Collateral token: Polygon USDC: 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174, Ropsten DAI: 0xaD6D458402F60fD3Bd25163575031ACDce07538D
+            quoteToken: "0x134e62bd2ee247d4186a1fdbaa9e076cb26c1355",
+            baseToken: "0x03582cb41f2fd982e1b531d633b6de049d56f2a0",
         }
 
         // Issue API request and fetch JSON response
-        // const res = await fetch(`https://ropsten.api.0x.org/orderbook/v1/orders?${qs.stringify(params)}`);
-        const res = await fetch(`https://ropsten.api.0x.org/orderbook/v1?${qs.stringify(params)}`);
+        // const res = await fetch(`https://ropsten.api.0x.org/orderbook/v1/orders?${qs.stringify(params)}`); // unordered list including either bids or asks
+        const res = await fetch(`https://ropsten.api.0x.org/orderbook/v1?${qs.stringify(params)}`); // ordered orderbook including both bids and asks
         const resJSON = await res.json();
 
         console.log(resJSON)
@@ -77,6 +78,7 @@ function BatchFillOrders() {
             const aux = responseOrder.map(item => item.order);
             orders = aux.map(({ signature, ...rest }) => rest);
             signatures = aux.map(({ signature, ...rest }) => signature);
+            // Get metaData which contains the remainingFillableTakerAmount
             metaData = responseOrder.map(item => item.metaData);
         } catch(err) {
             alert("No orders found")
