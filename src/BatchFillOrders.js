@@ -67,9 +67,8 @@ function BatchFillOrders() {
         // Fetch first order object in records JSON object array
         let orders = [];
         let signatures = [];
-        let remainingFillableTakerAmounts = []
         let responseOrder;
-        let metadata = [];
+        let metaData = [];
         try {
             responseOrder = resJSON["bids"]["records"];
             
@@ -78,15 +77,7 @@ function BatchFillOrders() {
             const aux = responseOrder.map(item => item.order);
             orders = aux.map(({ signature, ...rest }) => rest);
             signatures = aux.map(({ signature, ...rest }) => signature);
-
-            // metadata = responseOrder.map(item => item.metadata)
-            metadata = responseOrder["metadata"];
-            // remaining = aux2.map(({ remainingFillableTakerAmount, ...rest}) => remainingFillableTakerAmount)
-            // responseOrder.map(function (metadata) {
-            //     remainingFillableTakerAmounts.push(metadata.remainingFillableTakerAmount)
-                // delete metadata.signature
-                // return metadata
-            //   })
+            metaData = responseOrder.map(item => item.metaData);
         } catch(err) {
             alert("No orders found")
             console.log(err);
@@ -98,22 +89,22 @@ function BatchFillOrders() {
         const takerAccount = accounts[0]; 
         console.log("Current account connected: " + takerAccount)
 
-        // ************* Set up approval ****************
-        // Contract addresses of maker and taker token
+        // **************** Check allowance (method 1 using web3) *************
+        // Contract addresses of taker token
         const takerTokenAddress = params.baseToken;
 
-        // **************** Check allowance (method 1 using web) *************
-        // Initialize taker and maker contracts
+        // Initialize taker token contract
         const takerTokenContract = await new web3.eth.Contract(ERC20_ABI, takerTokenAddress)
         
         // Check allowance
         const approvedByTaker = await takerTokenContract.methods.allowance(takerAccount, exchangeProxyAddress).call();
         // *************************************************************************************
 
-        // **************** Check allowance (method 1 using 0x libraries) *************
-        // You have to comment out the approval part above if you want to use this part
+        // **************** Check allowance (method 2 using 0x libraries) *************
+        // Contract addresses of taker token
+        // const takerTokenAddress = params.baseToken;
 
-        // // Initialize taker and maker contracts
+        // // Initialize taker contract
         // const takerTokenContract = new ERC20TokenContract(takerTokenAddress, web3.eth.currentProvider);
 
         // // Check allowance
@@ -123,31 +114,28 @@ function BatchFillOrders() {
         // Print allowances
         console.log("Approved by taker: " + await approvedByTaker.toString())
 
-
         // TODO: Handle sum(takerAssetAmountFillAmounts) > allowance
+        
+        console.log(metaData)
 
-        // Set taker amount
-        // const takerFillAmount1 = new BigNumber(1);
-        // const takerFillAmount2 = new BigNumber(1);
-        // const takerFillAmount3 = new BigNumber(1);
-
-        // Serialize an array of three BigNumbers
-        // const str = JSON.stringify( [takerFillAmount1] )
-        // Return an array of three BigNumbers
-        console.log('metadata', metadata)
-        const takerAssetFillAmounts = ['1']
-        // JSON.parse(str, function (key, val) {
-        //     return key === '' ? val : new BigNumber(val)
-        // })
+        // Enter amounts to fill for each of the orders as an array of strings 
+        const takerAssetFillAmounts = [
+            metaData[0].remainingFillableTakerAmount,
+            // metaData[1].remainingFillableTakerAmount,
+            // metaData[2].remainingFillableTakerAmount,
+            // '1'
+        ]
 
         console.log('takerAssetFillAmounts')
         console.log(takerAssetFillAmounts)
+
+        const len = takerAssetFillAmounts.length
 
         // TODO Handle sum(takerAssetAmountFillAmounts) > remainingFillable amount
 
         // Batch fill limit order
         await exchange
-            .batchFillLimitOrders(orders.slice(0,1), signatures.slice(0,1), takerAssetFillAmounts, true)
+            .batchFillLimitOrders(orders.slice(0,len), signatures.slice(0,len), takerAssetFillAmounts, true)
             .awaitTransactionSuccessAsync({ from: takerAccount})
             .catch((err) => console.error(err));
     };
